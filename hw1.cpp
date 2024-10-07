@@ -22,8 +22,10 @@ sparseMatrix Sigmoid( sparseMatrix &A );
 //funamental tools for developers
 void add_entry( sparseMatrix &A, int row, int col, double val );	//add a new entry to a sparse matrix
 void print( sparseMatrix &A );				//print the whole sparse matrix
-int bs_same( sparseMatrix &A, int row, int col );				//find whether an entry(row^th, col^th term) existed in an sparse matrix
+int bs_same( sparseMatrix &A, int row, int col );	//find whether an entry(row^th, col^th term) existed in an sparse matrix
 void sort_rowMajority( sparseMatrix &A );	//to sort a sparse matrix by row-majority
+void transpose( sparseMatrix &A );
+
 
 int main(){
 		//create & initialize the matrices
@@ -37,6 +39,43 @@ int main(){
 		
 
 		return 0;
+}
+
+
+void print_entry( sparseMatrix &A, int row, int col ){	//done
+		int n = bs_same( A, row, col );
+
+		if( n == 0 ) printf( "value: 0\n" );
+		else printf( "value: %lf\n", A.at(n).value );
+
+		return;
+}
+sparseMatrix sparse_matrix_add( sparseMatrix &A, sparseMatrix &B ){	//done
+		sparseMatrix result = A;
+
+		int len = B.size();
+		for( int i = 1; i < len; i++ ){
+				int n = bs_same( A, B.at(i).row, B.at(i).col );
+
+				if( n == 0 ){
+						add_entry( A, B.at(i).row, B.at(i).col, B.at(i).value );
+						if( A.at(0).row >= B.at(0).row ) result.at(0).row++;
+						if( A.at(0).col >= B.at(0).col ) result.at(0).col++;
+						result.at(0).value++;
+				}
+				else result.at(n).value += B.at(i).value;
+		}
+
+		return result;
+}
+sparseMatrix sparse_matrix_multiply( sparseMatrix &A, sparseMatrix &B ){
+
+}
+sparseMatrix ReLU( sparseMatrix &A ){
+
+}
+sparseMatrix Sigmoid( sparseMatrix &A ){
+
 }
 
 void sort_rowMajority( sparseMatrix &A ){	//done

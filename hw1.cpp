@@ -28,14 +28,24 @@ sparseMatrix transpose( sparseMatrix &A );			//make the matrix available for the
 int compare( int a, int b );
 
 int main(){
-		//create & initialize the matrices
-		sparseMatrix W, X, B, Z;
-		add_entry( W, 0, 0, 0, 1 );
-		add_entry( X, 0, 0, 0, 1 );
-		add_entry( B, 0, 0, 0, 1 );
-		add_entry( Z, 0, 0, 0, 1 );
+		int row_w = 0, row_x = 0, row_b = 0;
+		int col_w = 0, col_x = 0, col_b = 0;
 
-		//user-dominated
+		//initialization
+		printf( "Firstly, you have to initialize the matrices.(W, X, B)\n" );
+		printf( "Please input the \"number of rows\" and the \"columns\" of matrix W: " );
+		scanf( "%d %d", &row_w, &col_w );
+		printf( "Please input the \"number of rows\" and the \"columns\" of matrix X: " );
+		scanf( "%d %d", &row_x, &col_x );
+		printf( "Please input the \"number of rows\" and the \"columns\" of matrix Y: " );
+		scanf( "%d %d", &row_y, &col_y );
+		//create the matrices
+		sparseMatrix W, X, B;
+
+
+		while(1){
+				
+		}
 		
 
 		return 0;
@@ -172,12 +182,13 @@ int bs_same( sparseMatrix &A, int row, int col ){	//done
 		return 0;
 }
 void add_entry( sparseMatrix &A, int row, int col, double val, bool flag ){	//done
-		if( A.size() < 1 ) A.push_back( {0, 0, 0} );
-		int n = bs_same( A, row, col );
+		int n = 0;
+		if( A.size() < 1 ) A.push_back( {row + 1, col + 1, 0} );
+		else n = bs_same( A, row, col );
 
 		if( n == 0 ){
-				if( row > A.at(0).row ) A.at(0).row++;
-				if( col > A.at(0).col ) A.at(0).col++;
+				if( row >= A.at(0).row ) A.at(0).row++;
+				if( col >= A.at(0).col ) A.at(0).col++;
 				A.at(0).value++;
 						
 				A.push_back( { row, col, val } );
@@ -229,7 +240,7 @@ sparseMatrix transpose( sparseMatrix &A ){	//done
 
 		return result;
 }
-int compare( int a, int b ){
+int compare( int a, int b ){	//done
 		if( a > b ) return 1;
 		else if( a == b ) return 0;
 		else return -1;

@@ -28,24 +28,44 @@ sparseMatrix transpose( sparseMatrix &A );			//make the matrix available for the
 int compare( int a, int b );
 
 int main(){
-		int row_w = 0, row_x = 0, row_b = 0;
-		int col_w = 0, col_x = 0, col_b = 0;
+		int n_w = 0, n_b = 0;
+		printf( "Please input the number of \"W\" matrix (enter an integer greater than 0): " );
+		scanf( "%d", &n_w );
+		printf( "Please input the number of \"B\" matrix (enter an integer greater than 0): " );
+		scanf( "%d", &n_b );
+		printf( "------------------------------------------------------------------------------------\n" );
 
-		//initialization
-		printf( "Firstly, you have to initialize the matrices.(W, X, B)\n" );
-		printf( "Please input the \"number of rows\" and the \"columns\" of matrix W: " );
-		scanf( "%d %d", &row_w, &col_w );
-		printf( "Please input the \"number of rows\" and the \"columns\" of matrix X: " );
-		scanf( "%d %d", &row_x, &col_x );
-		printf( "Please input the \"number of rows\" and the \"columns\" of matrix Y: " );
-		scanf( "%d %d", &row_y, &col_y );
 		//create the matrices
-		sparseMatrix W, X, B;
+		sparseMatrix W[n_w], X, B[n_b];
 
+		printf( "Now, you'll have to enter the entries of matrices one by one in a designated format.\n" );
+		printf( "Let's have a quick example to show how you should give instructions to this program: previously you told the program you want 3 W matrices, then you have to enter \"+ 0 1 -6\" to add 0th row, 1st column a \"-6\" entry in the first W matrix. You can add as more entries as you want to the matrix.\n\nAnd as you're done with it and want to start entering the entries of the second W, simply enter a \"n\". So that you'll be able to go on to the the matrix.\n" );
+		//while(1){
+				char instruction = '?';
+				//creating "n_w" W matrices
+				for( int i = 0; i < n_w; i++ ){
+						while(1){
+								//adding entries to the "i^th" W matrix
+								int row = 0, col = 0, val = 0;
+								scanf( "%c", &instruction );
 
-		while(1){
-				
-		}
+								if( instruction == '+' ){
+										scanf( " %d %d %d", &row, &col, &val );
+										if( ( row < 0 ) || ( col < 0 ) ) printf( "Invalid position of matrix, failed to add an entry.\n" );
+										else add_entry( W[i], row, col, val, 1 );
+								}
+								else if( instruction == 'n' ){
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
+										break;
+								}
+								else{
+										printf( "Invalid instruction, check the format again.\n" );
+										cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+								}
+
+						}
+				}
+		//}
 		
 
 		return 0;

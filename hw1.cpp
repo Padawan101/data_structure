@@ -40,7 +40,6 @@ int main(){
 
 		printf( "Now, you'll have to enter the entries of matrices one by one in a designated format.\n" );
 		printf( "Let's have a quick example to show how you should give instructions to this program: previously you told the program you want 3 W matrices, then you have to enter \"+ 0 1 -6\" to add 0th row, 1st column a \"-6\" entry in the first W matrix. You can add as more entries as you want to the matrix.\n\nAnd as you're done with it and want to start entering the entries of the second W, simply enter a \"n\". So that you'll be able to go on to the the matrix.\n" );
-		//while(1){
 				char instruction = '?';
 				//creating "n_w" W matrices
 				for( int i = 0; i < n_w; i++ ){
@@ -60,12 +59,87 @@ int main(){
 								}
 								else{
 										printf( "Invalid instruction, check the format again.\n" );
-										cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
 								}
 
 						}
 				}
-		//}
+				//creating the X matrix
+						while(1){
+								//adding entries to the "i^th" W matrix
+								int row = 0, col = 0, val = 0;
+								scanf( "%c", &instruction );
+
+								if( instruction == '+' ){
+										scanf( " %d %d %d", &row, &col, &val );
+										if( ( row < 0 ) || ( col < 0 ) ) printf( "Invalid position of matrix, failed to add an entry.\n" );
+										else add_entry( X, row, col, val, 1 );
+								}
+								else if( instruction == 'n' ){
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
+										break;
+								}
+								else{
+										printf( "Invalid instruction, check the format again.\n" );
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
+								}
+
+						}
+				//creating "n_b" B matrices
+				for( int i = 0; i < n_b; i++ ){
+						while(1){
+								//adding entries to the "i^th" W matrix
+								int row = 0, col = 0, val = 0;
+								scanf( "%c", &instruction );
+
+								if( instruction == '+' ){
+										scanf( " %d %d %d", &row, &col, &val );
+										if( ( row < 0 ) || ( col < 0 ) ) printf( "Invalid position of matrix, failed to add an entry.\n" );
+										else add_entry( B[i], row, col, val, 1 );
+								}
+								else if( instruction == 'n' ){
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
+										break;
+								}
+								else{
+										printf( "Invalid instruction, check the format again.\n" );
+										cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
+								}
+
+						}
+				}
+
+		//computing the fully connected layer
+				//Ws
+		Z = W[0];
+		for( int i = 1; i < n_w; i++ ){
+				if( Z.at(0).col != B[i].at(0).row ){
+						printf( "Some of the W matrices were found to be incompatible for performing matrix multiplication, failed to achieve the computation of Fully Connected Layer.\n" );
+						return 0;
+				}
+				
+				Z = sparse_matrix_multiply( Z, W[i] );
+		}
+
+				//X
+		if( Z.at(0).col != X.at(0).row ){
+				printf( "The last W matrix and X matrix were found to be incompatible for performing matrix multiplication, failed to achieve the computation of Fully Connected Layer.\n" );
+				return 0;
+		}
+		Z = sparse_matrix_multiply( Z, X );
+
+				//B
+		for( int i = 0; i < n_b; i++ ){
+				if( ( Z.at(0).row != X.at(0).row ) || ( Z.at(0).col != X.at(0).col ) ){
+						printf( "Some B matrices were found to be incompatible for performing matrix addition, failed to achieve the computation of Fully Connected Layer.\n" );
+						return 0;
+				}
+
+				Z = sparse_matrix_add( Z, B[i] );
+		}
+
+		printf( "Successfully complete the computation of Fully Connected Layer!\nHere are the non-zero terms of Z:\n" );
+		print(Z);
 		
 
 		return 0;

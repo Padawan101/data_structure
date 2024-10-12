@@ -36,17 +36,20 @@ int main(){
 		printf( "------------------------------------------------------------------------------------\n" );
 
 		//create the matrices
-		sparseMatrix W[n_w], X, B[n_b];
+		sparseMatrix W[n_w], X, B[n_b], Z;
 
 		printf( "Now, you'll have to enter the entries of matrices one by one in a designated format.\n" );
 		printf( "Let's have a quick example to show how you should give instructions to this program: previously you told the program you want 3 W matrices, then you have to enter \"+ 0 1 -6\" to add 0th row, 1st column a \"-6\" entry in the first W matrix. You can add as more entries as you want to the matrix.\n\nAnd as you're done with it and want to start entering the entries of the second W, simply enter a \"n\". So that you'll be able to go on to the the matrix.\n" );
+		printf( "------------------------------------------------------------------------------------\n" );
 				char instruction = '?';
 				//creating "n_w" W matrices
 				for( int i = 0; i < n_w; i++ ){
+						printf( "W matrix #%d:\n", i );
 						while(1){
 								//adding entries to the "i^th" W matrix
 								int row = 0, col = 0, val = 0;
-								scanf( "%c", &instruction );
+								printf("> ");
+								scanf( " %c", &instruction );
 
 								if( instruction == '+' ){
 										scanf( " %d %d %d", &row, &col, &val );
@@ -64,11 +67,14 @@ int main(){
 
 						}
 				}
+				print(W[0]); //delete this
 				//creating the X matrix
+				printf( "X matrix #0:\n" );
 						while(1){
 								//adding entries to the "i^th" W matrix
 								int row = 0, col = 0, val = 0;
-								scanf( "%c", &instruction );
+								printf("> ");
+								scanf( " %c", &instruction );
 
 								if( instruction == '+' ){
 										scanf( " %d %d %d", &row, &col, &val );
@@ -85,12 +91,15 @@ int main(){
 								}
 
 						}
+						print(X); //delete this
 				//creating "n_b" B matrices
 				for( int i = 0; i < n_b; i++ ){
+						printf( "B matrix #%d:\n", i );
 						while(1){
 								//adding entries to the "i^th" W matrix
 								int row = 0, col = 0, val = 0;
-								scanf( "%c", &instruction );
+								printf("> ");
+								scanf( " %c", &instruction );
 
 								if( instruction == '+' ){
 										scanf( " %d %d %d", &row, &col, &val );
@@ -108,6 +117,8 @@ int main(){
 
 						}
 				}
+				print(B[0]); //delete this
+		printf( "------------------------------------------------------------------------------------\n" );
 
 		//computing the fully connected layer
 				//Ws
@@ -289,15 +300,16 @@ void add_entry( sparseMatrix &A, int row, int col, double val, bool flag ){	//do
 		}
 		else if( flag ){
 				A.at(n).value = val;
-				sort_rowMajority(A);
 		}
+
+		sort_rowMajority(A);
 
 		return;
 }
 void print( sparseMatrix &A ){	//done
 		int len = A.size();
 
-		printf( "It's a %d * %d matrix with %lf non-zero terms.\n row | col | value\n", A.at(0).row, A.at(0).col, A.at(0).value );
+		printf( "It's a %d * %d matrix with %d non-zero terms.\n row | col | value\n", A.at(0).row, A.at(0).col, ( (int) A.at(0).value ) );
 		for( int i = 1; i < len; i++ ){
 				printf( "%d | %d | %lf\n", A.at(i).row, A.at(i).col, A.at(i).value );
 		}

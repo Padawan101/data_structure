@@ -34,7 +34,7 @@ int main(){
 		add_entry( A, 1, 0, -1, 0 );
 		add_entry( A, 1, 1, 4, 0 );
 		add_entry( A, 1, 2, 6, 0 );
-		add_entry( A, 2, 2, 99, 0 );
+		//add_entry( A, 2, 2, 99, 0 );
 
 		add_entry( B, 0, 0, 3, 0 );
 		add_entry( B, 0, 1, -1, 0 );
@@ -43,11 +43,16 @@ int main(){
 
 		print(A);
 		print(B);
-		printf("\n\n\n");
 
-		//sparseMatrix Z = sparse_matrix_multiply( A, B );
 		sparseMatrix Z = sparse_matrix_multiply( A, B );
+		//sparseMatrix Z = sparse_matrix_add( A, B );
 		print( Z );
+
+		Z = ReLU(Z);
+		print(Z);
+
+		Z = Sigmoid(Z);
+		print(Z);
 
 		return 0;
 }
@@ -78,61 +83,83 @@ sparseMatrix sparse_matrix_add( sparseMatrix &A, sparseMatrix &B ){	//re
 
 		return result;
 }
-sparseMatrix sparse_matrix_multiply( sparseMatrix &A, sparseMatrix &B ){	//
-		sparseMatrix result;
-		printf("cp3\n");
-		sparseMatrix tmp = transpose(B);
-		printf("cp4\n");
-		int row = A.at(1).row, col = 0;
-		int row_begin = 1;
-
-		for( int i = 1; i < A.size(); ){
+sparseMatrix sparse_matrix_multiply( sparseMatrix &A, sparseMatrix &B ){	//re
+		sparseMatrix result, tmp = transpose(B);
+		
+		for( int i = 0; i < A.at(0).row; i++ ){	//A's row iteration
 				double sum = 0;
-				col = tmp.at(1).row;
-				printf("cp 9\n");
-				for( int j = 1; j < B.size(); ){	//problem
-						printf("cp 99\n");
-						if( A.at(i).row != row ){
-								add_entry( result, row, col, sum, 1 );
-								i = row_begin;
-								for( ; tmp.at(j).row == col; j++ );
-								col = tmp.at(j).row;
-						}
-						else if( tmp.at(j).row != col ){
-								add_entry( result, row, col, sum, 1 );
-								i = row_begin;
-								col = tmp.at(j).row;
+				int row_begin = A.at(1).row;
+
+				for( int j = 1; j <= ( tmp.size() - 1 ); j++ ){	//B^T's row iteration
+						if( row_begin == tmp.at(j).row ){
+								int n = bs_same( A, i, tmp.at(j).col );
+								if( n != 0 ) sum += ( tmp.at(j).value * A.at(n).value );
 						}
 						else{
-								switch( compare( A.at(i).col, tmp.at(j).col ) ){
-										case (-1):
-												i++;
-												break;
-										case (0):
-												sum += ( A.at(i++).value * tmp.at(j++).value );
-												break;
-										case (1):
-												j++;
-								}
+								if( sum != 0 ) add_entry( result, i, row_begin, sum, 1 ), sum = 0;
+								row_begin = tmp.at(j).row, j--;
+						}
+
+						if( ( j == ( tmp.size() - 1 ) ) && ( sum != 0 ) ){
+								if( sum != 0 ) add_entry( result, i, row_begin, sum, 1 );
 						}
 				}
-
-				for( ; A.at(i).row == row; i++ );
-				row_begin = i;
-				row = A.at(i).row;
 		}
-		printf("cp 1\n");
-
-		result.at(0).row = A.at(0).row, result.at(0).col = B.at(0).col, result.at(0).value = ( result.size() - 1 );
 
 		return result;
 }
-sparseMatrix ReLU( sparseMatrix &A ){	//done
+sparseMatrix ReLU( sparseMatrix &A ){	//re
 		sparseMatrix result = A;
 
-		int len = A.size();
-		for( int i = 1; i < len; i++ ){
-				result.at(i).value = max( 0.0, result.at(i).value );
+		for( int i = 1; i < result.size(); i++ ){
+				printf("a\n");
+				if( result.at(i).value < 0 ){
+						//adjust result.at(0).col
+						if( result.at(i).col == ( result.at(0).col - 1 ) ){
+								int flag = 0;
+								for( int j = 1; j < result.size(); j++ ){
+										if( j != i ){
+												int n = bs_same( result, result.at(j).row, result.at(i).col );
+												if( n != 0 ){
+														flag = 1;
+														break;
+												}
+										}
+								}
+								if( !flag ){
+										int col_new = result.at(1).col;
+										for( int j = 2; j < result.size(); j++ ){
+												if( result.at(j).col > col_new ) col_new = result.at(j).col;
+										}
+										result.at(0).col = col_new + 1;
+								}
+						}
+						//adjust result.at(0).row
+						if( result.at(i).row == ( result.at(0).row - 1 ) ){
+								int flag = 0;
+								for( int j = 1; j < result.size(); j++ ){
+										if( j != i ){
+												int n = bs_same( result, result.at(i).row, result.at(j).col );
+												if( n != 0 ){
+														flag = 1;
+														break;
+												}
+										}
+								}
+								if( !flag ){
+										int row_new = result.at(1).row;
+										for( int j = 2; j < result.size(); j++ ){
+												if( result.at(j).row > row_new ) row_new = result.at(j).row;
+										}
+										result.at(0).row = row_new + 1;
+								}
+						}
+
+						result.erase( result.begin() + i );
+						result.at(0).value--;
+						i = 1;
+				}
+				printf( "%d %d %lf\n", result.at(0).row, result.at(0).col, result.at(0).value );
 		}
 
 		return result;
@@ -171,6 +198,31 @@ void sort_rowMajority( sparseMatrix &A ){	//re
 
 		return;
 }
+int bs_same(sparseMatrix &A, int row, int col) {	//re
+    if (A.size() > 1) {
+        sort_rowMajority(A);  // Ensure sorted by row-majority
+
+        int left = 1, right = A.size() - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (A.at(mid).row < row) {
+                left = mid + 1;
+            } else if (A.at(mid).row > row) {
+                right = mid - 1;
+            } else {
+                // Binary search within the same row for col
+                if (A.at(mid).col < col) {
+                    left = mid + 1;
+                } else if (A.at(mid).col > col) {
+                    right = mid - 1;
+                } else {
+                    return mid;  // Found the element
+                }
+            }
+        }
+    }
+    return 0;  // Element not found
+}/*
 int bs_same( sparseMatrix &A, int row, int col ){	//re
 		if( A.size() > 1 ){
 				sort_rowMajority(A);
@@ -192,7 +244,7 @@ int bs_same( sparseMatrix &A, int row, int col ){	//re
 				}
 		}
 		return 0;
-}
+}*/
 void add_entry( sparseMatrix &A, int row, int col, double val, bool flag ){	//re
 		int n = 0;
 		if( A.size() < 1 ) A.push_back( {row + 1, col + 1, 0} );

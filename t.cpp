@@ -49,9 +49,9 @@ int main(){
 		add_entry( B[0], 1, 1, 1, 0 );
 		add_entry( B[0], 1, 2, 1, 0 );
 
-		print(W[0]);
+		/*print(W[0]);
 		print(X);
-		print(B[0]);
+		print(B[0]);*/
 		/*
 		printf( "Please input the number of \"W\" matrix (enter an integer greater than 0): " );
 		scanf( "%d", &n_w );
@@ -180,16 +180,17 @@ int main(){
 		printf("\nHere are the result of Z after manipulated by the ReLU function:\n");
 		print(Z_a1);
 		printf("\nHere are the result of Z after manipulated by the Sigmoid function:\n");
+		printf( "Sigmoid: %ld %d %d %lf\n", Z_a2.size(), Z_a2.at(0).row, Z_a2.at(0).col, Z_a2.at(0).value );
 		print(Z_a2);
 
 		printf( "------------------------------------------------------------------------------------\n" );
 		printf("If you would like to search an entry of any specific matrix, feel free to do it in the designated format:\n");
-		printf("(matrix name, matrix num(if exists), row, column)  e.g.: \"B 0 1 2\" or \"X 1 1\"\nMatrix Names: W, X, B, Z, R(Z after ReLU), S(Z after Sigmoid)\nIf you've done with searching and is looking forward to end the whole program, simply enter \"z\"\n");
+		printf("(matrix name, matrix num(if exists), row, column)  e.g.: \"B 0 1 2\" or \"X 1 1\"\nMatrix Names: W, X, B, Z, R(Z after ReLU), S(Z after Sigmoid)\nIf you've done with searching and is looking forward to end the whole program, simply enter \"0\"\n");
 		while(1){
 				printf("> ");
 				char m = '?';
 				int n = 0, row = 0, col = 0;
-				scanf( "%c", &m );
+				scanf( " %c", &m );
 
 				if( ( m == 'B' ) || ( m == 'b' ) ){
 						scanf( " %d %d %d", &n, &row, &col );
@@ -197,11 +198,31 @@ int main(){
 				}
 				else if( ( m == 'w' ) || ( m == 'W' ) ){
 						scanf( " %d %d %d", &n, &row, &col );
-						print_entry( B[n], row, col );
+						print_entry( W[n], row, col );
 				}
 				else if( ( m == 'X' ) || ( m == 'x' ) ){
 						scanf( " %d %d", &row, &col );
 						print_entry( X, row, col );
+				}
+				else if( ( m == 'Z' ) || ( m == 'z' ) ){
+						scanf( " %d %d", &row, &col );
+						print_entry( Z, row, col );
+				}
+				else if( ( m == 'R' ) || ( m == 'r' ) ){
+						scanf( " %d %d", &row, &col );
+						print_entry( Z_a1, row, col );
+				}
+				else if( ( m == 'S' ) || ( m == 's' ) ){
+						scanf( " %d %d", &row, &col );
+						print_entry( Z_a2, row, col );
+				}
+				else if( m == '0' ){
+						printf( "Bye!\n" );
+						break;
+				}
+				else{
+						printf( "Invalid instruction, check the format again.\n" );
+						//cin.ignore( numeric_limits<std::streamsize>::max(), '\n' );
 				}
 		}
 
@@ -377,6 +398,7 @@ sparseMatrix Sigmoid( sparseMatrix &A ){	//re
 						add_entry( result, i, j, 0.5, 0 );
 				}
 		}
+		sort_rowMajority(result);
 
 		return result;
 }
@@ -385,7 +407,7 @@ void sort_rowMajority( sparseMatrix &A ){	//re
 		int len = A.size();
 		if( len > 2 ){
 				for( int i = 1; i < len; i++ ){
-						for( int j = 1; j < ( len - 1 - i ); j++ ){
+						for( int j = 1; j < ( len - i - 1 ); j++ ){
 								if( A.at(j).row > A.at(j + 1).row ){
 										Triple tmp = A.at(j);
 										A.at(j) = A.at(j + 1);
@@ -483,9 +505,4 @@ sparseMatrix transpose( sparseMatrix &A ){	//re
 		sort_rowMajority(A);
 
 		return result;
-}
-int compare( int a, int b ){	//done
-		if( a > b ) return 1;
-		else if( a == b ) return 0;
-		else return -1;
 }

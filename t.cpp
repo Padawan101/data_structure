@@ -112,7 +112,6 @@ sparseMatrix ReLU( sparseMatrix &A ){	//re
 		sparseMatrix result = A;
 
 		for( int i = 1; i < result.size(); i++ ){
-				printf("a\n");
 				if( result.at(i).value < 0 ){
 						//adjust result.at(0).col
 						if( result.at(i).col == ( result.at(0).col - 1 ) ){
@@ -159,23 +158,22 @@ sparseMatrix ReLU( sparseMatrix &A ){	//re
 						result.at(0).value--;
 						i = 1;
 				}
-				printf( "%d %d %lf\n", result.at(0).row, result.at(0).col, result.at(0).value );
 		}
 
 		return result;
 }
-sparseMatrix Sigmoid( sparseMatrix &A ){	//done
+sparseMatrix Sigmoid( sparseMatrix &A ){	//re
 		sparseMatrix result = A;
 
 		//tranform the existing terms
 		int len = A.size();
 		for( int i = 1; i < len; i++ ){
-				A.at(i).value = ( 1 / ( 1 + exp( (-1) * A.at(i).value ) ) );
+				result.at(i).value = ( 1 / ( 1 + exp( (-1) * A.at(i).value ) ) );
 		}
 		//turn the 0 term to 0.5
 		for( int i = 0; i < A.at(0).row; i++ ){
 				for( int j = 0; j < A.at(0).col; j++ ){
-						add_entry( A, i, j, 0.5, 0 );
+						add_entry( result, i, j, 0.5, 0 );
 				}
 		}
 

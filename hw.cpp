@@ -25,33 +25,9 @@ void print( sparseMatrix &A );				//print the whole sparse matrix
 int bs_same( sparseMatrix &A, int row, int col );	//find whether an entry(row^th, col^th term) existed in an sparse matrix
 void sort_rowMajority( sparseMatrix &A );	//to sort a sparse matrix by row-majority
 sparseMatrix transpose( sparseMatrix &A );			//make the matrix available for the multiply function
-int compare( int a, int b );
 
 int main(){
 		int n_w = 1, n_b = 1;
-		//delete this
-		/*sparseMatrix W[n_w], X,B[n_b], Z;
-		add_entry( W[0], 0, 0, 1, 0 );
-		add_entry( W[0], 0, 2, 2, 0 );
-		add_entry( W[0], 1, 0, -1, 0 );
-		add_entry( W[0], 1, 1, 4, 0 );
-		add_entry( W[0], 1, 2, 6, 0 );
-
-		add_entry( X, 0, 0, 3, 0 );
-		add_entry( X, 0, 1, -1, 0 );
-		add_entry( X, 2, 0, 2, 0 );
-		add_entry( X, 2, 2, 5, 0 );
-
-		add_entry( B[0], 0, 0, 1, 0 );
-		add_entry( B[0], 0, 1, 1, 0 );
-		add_entry( B[0], 0, 2, 1, 0 );
-		add_entry( B[0], 1, 0, 1, 0 );
-		add_entry( B[0], 1, 1, 1, 0 );
-		add_entry( B[0], 1, 2, 1, 0 );*/
-
-		/*print(W[0]);
-		print(X);
-		print(B[0]);*/
 		
 		printf( "Please input the number of \"W\" matrix (enter an integer greater than 0): " );
 		scanf( "%d", &n_w );
@@ -93,7 +69,7 @@ int main(){
 				}
 				print(W[0]); //delete this
 				//creating the X matrix
-				printf( "\nX matrix #0:\n" );
+				printf( "\nX matrix:\n" );
 						while(1){
 								//adding entries to the "i^th" W matrix
 								int row = 0, col = 0, val = 0;
@@ -162,7 +138,6 @@ int main(){
 		}
 		Z = sparse_matrix_multiply( Z, X );
 
-		print(Z);
 				//B
 		for( int i = 0; i < n_b; i++ ){
 				if( ( B[i].at(i).row != Z.at(i).row ) || ( B[i].at(i).col != Z.at(i).col ) ){
@@ -442,29 +417,7 @@ int bs_same(sparseMatrix &A, int row, int col) {	//re
         }
     }
     return 0;  // Element not found
-}/*
-int bs_same( sparseMatrix &A, int row, int col ){	//re
-		if( A.size() > 1 ){
-				sort_rowMajority(A);
-				
-
-				int left = 1, right = A.size() - 1;
-				//binary search
-				while( left <= right ){
-						int mid = ( left + right ) / 2;
-						if( A.at(mid).row < row ) left = mid + 1;
-						else if( A.at(mid).row > row ) right = mid - 1;
-						else{
-								int n = A.size();
-								for( int i = 1; i < n; i++ ){
-										if( ( A.at(i).col == col ) && ( A.at(i).row == row ) ) return i;
-								}
-								break;
-						}
-				}
-		}
-		return 0;
-}*/
+}
 void add_entry( sparseMatrix &A, int row, int col, double val, bool flag ){	//re
 		int n = 0;
 		if( A.size() < 1 ) A.push_back( {row + 1, col + 1, 0} );

@@ -130,6 +130,7 @@ int main(){
 				}
 				
 				Z = sparse_matrix_multiply( Z, W[i] );
+				printf( "check point 0\n" );	
 		}
 
 				//X
@@ -138,6 +139,7 @@ int main(){
 				return 0;
 		}
 		Z = sparse_matrix_multiply( Z, X );
+		printf( "check point 1\n" );
 
 				//B
 		for( int i = 0; i < n_b; i++ ){
@@ -147,6 +149,7 @@ int main(){
 				}
 
 				Z = sparse_matrix_add( Z, B[i] );
+				printf( "check point 2\n" );
 		}
 
 		printf( "Successfully complete the computation of Fully Connected Layer!\nHere are the non-zero terms of Z:\n" );

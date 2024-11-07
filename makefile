@@ -1,4 +1,4 @@
-all: hw2
+all: phw2
 
-hw2: hw2.cpp
-	-g++ hw2.cpp -o hw2
+phw2: phw2.cpp
+	-g++ phw2.cpp -o phw2

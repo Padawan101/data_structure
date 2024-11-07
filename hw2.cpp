@@ -29,7 +29,7 @@ stackPtr redoStack = nullptr, undoStack = nullptr;
 
 //functions
 		//for DDL
-void insertNode( char c, bool init );
+void insertNode( node &ptr, char c, bool init );
 void swapNode( bool dir );	//[dir] 1: right, 0: left
 void deleteNode( bool dir );	//[dir] 1: right, 0: left
 void printList( node head );
@@ -47,14 +47,16 @@ int main(){
 		printf( "Please enter an initial string consisting a/A-z/Z and space: " );
 		getline( cin, input );
 				//generate the list
-		_node beg;
-		beg.lLink = nullptr, beg.rLink = nullptr, beg.c = '|';
-		cursor = &beg;
-		node head;
+		_node beg, _cursor;
+		beg.lLink->lLink = nullptr, beg.rLink = &_cursor, _cursor.c = '!';
+		_cursor.lLink = &beg, _cursor.rLink = nullptr, _cursor.c = '|';
+		cursor = &_cursor;
+		node head = &beg;
 		int len = input.length();
 		for( int i = 0; i < len; i++ ){
-				insertNode( input[i], 1 );
-				if( i == 0 ) head = cursor->lLink;
+						if(i!=0) printf( "cursor->lLink: %c %p\n", cursor->lLink->c, cursor->lLink );
+				insertNode( cursor->lLink, input[i], 1 );
+						if(i!=0) printf( "cursor->lLink: %c %p\n", cursor->lLink->c, cursor->lLink );
 		}
 
 		printList(head);
@@ -63,7 +65,7 @@ int main(){
 		char command = '?';
 		while( command != 27 ){
 				cout << "Enter command (a-Z for insert, 0 for delete, b for backspace, 1 for move left, 2 for move right, u for undo, r for redo, esc to quit): ";
-				scanf( "%c", &command );
+				scanf( " %c", &command );
 
 				if( command == '0' ) deleteNode( 1 );
 				else if( command == 'b' ) deleteNode( 0 );
@@ -73,31 +75,39 @@ int main(){
 				else if( command == 'u' );
 				else if( command == 27 ) ;
 				else if( ( ( 'A' <= command ) && ( command <= 'Z' ) ) || ( ( 'a' <= command ) && ( command <= 'z' ) ) || ( command == ' ' ) ){
-						insertNode( command, cursor->lLink, 0 );
+						printf( "cursor->lLink: %c %p\n", cursor->lLink->c, cursor->lLink );
+						insertNode( cursor->lLink, command, 0 );
+						printf( "cursor->lLink: %c %p\n", cursor->lLink->c, cursor->lLink );
 		}
 				else printf( "Invalid Input.\n" );
+
+				printList(head);
 		}
 
 		return 0;
 }
 
-void insertNode( char c, bool init ){
+void insertNode( node &ptr, char c, bool init ){
 		node newNode = (node) malloc( sizeof( _node ) );
 		newNode->c = c;
 		newNode->rLink = nullptr, newNode->lLink = nullptr;
 
 		if( !init ) push( undoStack, 'i', c );
 
-		if( cursor->lLink == nullptr ){
+		if( ptr == nullptr ){
+				//if();
 				newNode->rLink = cursor;
 				cursor->lLink = newNode;
 		}
 		else{
-				cursor->lLink->rLink = newNode;
-				newNode->lLink = cursor->lLink;
+				printf("| %p ", ptr->rLink->lLink);
+				newNode->rLink = ptr->rLink;
+				newNode->lLink = ptr;
 
-				newNode->rLink = cursor;
-				cursor->lLink = newNode;
+				ptr->rLink->lLink = newNode;
+				ptr->rLink = newNode;
+				printf("%p |\n", newNode->rLink->lLink);
+				//printList(ptr->lLink);
 		}
 
 		return;
@@ -169,7 +179,7 @@ void deleteNode( bool dir ){
 }
 void printList( node head ){
 		int cnt = 0;
-		node ptr = head;
+		node ptr = head->rLink;
 
 		while( ptr != nullptr ){
 				if( cnt++ > 10 ) break;	//delete this
@@ -180,14 +190,17 @@ void printList( node head ){
 		printf("\n");
 }
 void undoNode(){
-		_stackNode tmp = pop();
+		_stackNode tmp = pop(undoStack);
 
 		if( tmp.command == '-' ) return;
 		else{
-				if( top.command == 'i' ) deleteNode(0);
-				else if( top.command == '0' ) insertNode(  );
+				if( tmp.command == 'i' ) deleteNode(0);
+				//else if( tmp.command == '0' ) insertNode(  );
+				//else if( tmp.command == 'b' ) insertNode(  );
+				else if( tmp.command == '1' ) swapNode(1);
+				else if( tmp.command == '2' ) swapNode(0);
 
-				push( redo, tmp.command, tmp.element );
+				push( redoStack, tmp.command, tmp.element );
 		}
 }
 

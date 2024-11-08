@@ -55,13 +55,14 @@ int main(){
 		//main feature
 		char command = '-';
 		while( command != 27 ){
+				cout << "Enter command (a-Z, A-Z, and space for insertion, 0 for delete, 3 for backspace delete, 1 for move left, 2 for move right, 4 for undo, 5 for redo, esc to quit): ";
 				command = cin.get();
 				cin.get();
 				if( ( ( 'A' <= command ) && ( command <= 'Z' ) ) || ( ( 'a' <= command ) && ( command <= 'z' ) ) || ( command == ' ' ) ){
 						insertNode( 0, command, 1 );
 				}
-				else if( command == '0' ) deleteNode( 0, 1 );
-				else if( command == '3' ) deleteNode( 1, 1 );
+				else if( command == '0' ) deleteNode( 1, 1 );
+				else if( command == '3' ) deleteNode( 0, 1 );
 				else if( command == '1' ) swapNode( 0, 1 );
 				else if( command == '2' ) swapNode( 1, 1 );
 				else if( command == '4' ) undo();
@@ -157,8 +158,8 @@ void redo(){
 				_node p = pop(0);
 
 				if( p.command == 'i' ) insertNode( 0, p.element, 0 );
-				else if( p.command == '0' ) deleteNode( 0, 0 );
-				else if( p.command == '3' ) deleteNode( 1, 0 );
+				else if( p.command == '0' ) deleteNode( 1, 0 );
+				else if( p.command == '3' ) deleteNode( 0, 0 );
 				else if( p.command == '1' ) swapNode( 0, 0 );
 				else if( p.command == '2' ) swapNode( 1, 0 );
 		}

@@ -1,4 +1,4 @@
-all: phw3
+all: phw4
 
-phw3: phw3.cpp
-	-g++ phw3.cpp -o phw3
+phw4: phw4.cpp
+	-g++ phw4.cpp -o phw4
